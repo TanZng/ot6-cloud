@@ -48,6 +48,7 @@ def get_from_s3(s3_client, bucket_name, file_name, sql_expression):
 
 CSV_DATA = "data/level_crime.csv"
 CSV_RESULTS = "data/results.csv"
+SQL_QUERY = "SELECT * from S3Object LIMIT 4"
 
 def main():
     load_dotenv()
@@ -77,7 +78,7 @@ def main():
     print("bucket 4 res: ", bucket_4_results)
 
     # s3_client, bucket_name, file_name, sql_expression
-    get_from_s3(s3_client, bucket_data, "level.csv", "SELECT * from S3Object LIMIT 4")
+    get_from_s3(s3_client, bucket_data, "level.csv", SQL_QUERY)
 
     push_file(bucket_4_results, CSV_RESULTS, "results.csv", s3_resource)
 

@@ -59,14 +59,15 @@ def main():
         region_name=REGION_NAME
     )
 
-    s3_client = session.resource('s3')
+    s3_resource = session.resource('s3')
+    s3_client = session.client('s3')
 
-    bucket_data, bucket_4_results = get_buckets(s3_client)
+    bucket_data, bucket_4_results = get_buckets(s3_resource)
 
     if bucket_4_results == "" :
-        bucket_4_results=create_bucket("bucket-data",s3_client)
+        bucket_4_results=create_bucket("bucket-data",s3_resource)
     if bucket_data == "":
-        bucket_data=create_bucket("bucket-4-results",s3_client)
+        bucket_data=create_bucket("bucket-4-results",s3_resource)
         push_file(CSV_DATA,s3_client)
 
     get_from_s3(s3_client, bucket_data, CSV_DATA, "SQL HERE")

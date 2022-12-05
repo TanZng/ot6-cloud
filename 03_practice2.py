@@ -1,6 +1,8 @@
 import boto3
+import uuid
 import os
 from dotenv import load_dotenv
+import pandas as pd
 
 def create_bucket_name(bucket_prefix):
     return ''.join([bucket_prefix, str(uuid.uuid4())])
@@ -22,9 +24,8 @@ def get_buckets(s3_client):
     return bucket_data, bucket_4_results
 
 
-def push_file(client_bucket_name, file_name, s3_resource):
-    file_object = s3_resource.Object(bucket_name = client_bucket_name, key = file_name)
-    file_object.upload_file(Filename = file_name, Key = file_name)
+def push_file(client_bucket_name, file_name, file_name_key, s3_resource):
+    s3_resource.Bucket(client_bucket_name).upload_file(Filename = file_name, Key = file_name_key)
 
 
 def get_from_s3(s3_client, bucket_name, file_name, sql_expression):
@@ -36,18 +37,17 @@ def get_from_s3(s3_client, bucket_name, file_name, sql_expression):
         InputSerialization = {'CSV': {'FileHeaderInfo': 'Use'}},
         OutputSerialization = {'CSV': {}}
     )
+    file1 = open(CSV_RESULTS,"a")
     for event in resp['Payload']:
         if 'Records' in event:
             tmp = event['Records']['Payload'].decode()
-            file1 = open(CSV_RESULTS,"a")
             file1.write(tmp)
             print(event['Records']['Payload'].decode())
     
-    file1.close() 
-    return pd.read_csv(CSV_RESULTS, header=None)
+    file1.close()
 
-CSV_DATA = "./data/level_crime.csv"
-CSV_RESULTS = "./data/results.txt"
+CSV_DATA = "data/level_crime.csv"
+CSV_RESULTS = "data/results.csv"
 
 def main():
     load_dotenv()
@@ -68,14 +68,17 @@ def main():
     bucket_data, bucket_4_results = get_buckets(s3_client)
 
     if bucket_4_results == "" :
-        bucket_4_results=create_bucket("bucket-data",s3_resource)
+        bucket_4_results, ig=create_bucket("bucket-4-results",s3_resource)
     if bucket_data == "":
-        bucket_data=create_bucket("bucket-4-results",s3_resource)
-        push_file(CSV_DATA,s3_client)
+        bucket_data, ig=create_bucket("bucket-data",s3_resource)
+        push_file(bucket_data, CSV_DATA, "level.csv",s3_resource)
+
+    print("bucket date: ", bucket_data)
+    print("bucket 4 res: ", bucket_4_results)
 
     # s3_client, bucket_name, file_name, sql_expression
-    get_from_s3(s3_client, bucket_data, CSV_DATA, "SELECT average from S3Object s WHERE date BETWEEN s.dt '1750-01-01' AND s.dt '1750-31-12'")
+    get_from_s3(s3_client, bucket_data, "level.csv", "SELECT * from S3Object LIMIT 4")
 
-    push_file(bucket_4_results, CSV_RESULTS, s3_resource)
+    push_file(bucket_4_results, CSV_RESULTS, "results.csv", s3_resource)
 
 main()

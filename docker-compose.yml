@@ -1,0 +1,11 @@
+services:
+  notebook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8888:8888
+    volumes:
+       - ./:/home/jovyan/work/data
+    environment:
+      - GRANT_SUDO=yes

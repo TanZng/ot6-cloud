@@ -1,7 +1,7 @@
 import scrapy
 import pandas as pd
 
-# run with: scrapy runspider 06_web_scraping.py
+# run with: scrapy runspider final_project_scraper.py
 
 # get all possible attributes of the products that can be useful for analysis
 # collect products from all categories from all locations of auchan
@@ -42,12 +42,3 @@ class ProductSpider(scrapy.Spider):
                 'rating count': product.css('.rating-value__value--count').css('::text').get(),
                 #'sold by': 'product-thumbnail__marketplace-label-link'
             }
-            #response.follow(category.css('.navigation-block__head'), self.parse_category)    
-            
-            
-            #def parse_category(self, response):
-    #    for product in response.css('.product-thumbnail__description'):
-    #        yield {'name': product.css('::a').get()}
-        
-    #    for next_page in response.css('a.pagination-adjacent__link'):
-    #        yield response.follow(next_page, self.parse)

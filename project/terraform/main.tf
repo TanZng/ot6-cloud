@@ -24,18 +24,18 @@ apt-get update
 apt-get install -y python3-pip git curl
 
 # Replace this with our script and requirements.txt
-curl -L "https://raw.githubusercontent.com/BlackIQ/Hello-World/main/Python/examples/python.py" -o "main.py"
+git clone https://github.com/TanZng/ot6-cloud.git
 pip3 install -r requirements.txt
 
 # Copy main script
 mkdir -p /opt/app
-cp main.py /opt/app/
+cp final_project_scraper.py /opt/app/
 
 # Create a cron job to run the main.py script every minute
 # TODO: change how often run the script
 sudo service cron start
 
-echo "* * * * * /usr/bin/python3 /opt/app/main.py >> /scrapy.log" | crontab
+echo "* * * * * /usr/bin/python3 /opt/app/final_project_scraper.py >> /scrapy.log" | crontab
 
 EOF
 

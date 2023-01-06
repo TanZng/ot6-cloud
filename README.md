@@ -1,4 +1,18 @@
-# OT6 Cloud
+# OT6 Cloud Project
+
+Create a virtual env
+
+```bash
+python3 -m venv env
+```
+
+```bash
+source env/bin/activate
+```
+
+```bash
+pip -r requirements.txt
+```
 
 Create an .env file with these credentials:
 
@@ -6,12 +20,3 @@ Create an .env file with these credentials:
 SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXX
 ACCESS_KEY_ID=XXXXXXXXXX
 ```
-
-## Jupiter notebook
-
-Run
-```bash
-docker compose up -d
-```
-
-Practical Session 2, visit http://localhost:8888/notebooks/work/data/analytics.ipynb

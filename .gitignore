@@ -1,3 +1,5 @@
-.env
+**/.env
 ./data/results.txt
 .ipynb_checkpoints
+/env
+**/__pycache__/

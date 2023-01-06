@@ -36,5 +36,3 @@ terraform.rc
 .terraform.lock.hcl
 creds
 conf
-terraform_ec2_key
-terraform_ec2_key.pub

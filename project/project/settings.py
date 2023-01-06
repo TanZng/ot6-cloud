@@ -6,6 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
 
 BOT_NAME = 'project'
 
@@ -66,8 +67,8 @@ ITEM_PIPELINES = {
    'project.pipelines.DynamoDbPipeline': 1,
 }
 
-AWS_ACCESS_KEY_ID = 'AKIAUELZXXSWQ3EEGIUX'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = os.getenv('SECRET_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('ACCESS_KEY_ID')
 DYNAMODB_PIPELINE_REGION_NAME = 'us-east-1'
 DYNAMODB_PIPELINE_TABLE_NAME = 'project-dynamodb'
 

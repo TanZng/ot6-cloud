@@ -1,5 +1,7 @@
 import datetime
 import boto3
+from botocore.credentials import InstanceMetadataProvider, InstanceMetadataFetcher
+
 
 
 def default_encoder(value):
@@ -17,8 +19,11 @@ class DynamoDbPipeline(object):
 
     def __init__(self, aws_access_key_id, aws_secret_access_key, region_name,
                  table_name, encoder=default_encoder):
-        self.aws_access_key_id = aws_access_key_id
-        self.aws_secret_access_key = aws_secret_access_key
+        provider = InstanceMetadataProvider(iam_role_fetcher=InstanceMetadataFetcher(timeout=1000, num_attempts=2))
+        creds = provider.load().get_frozen_credentials()
+
+        self.aws_access_key_id = creds.access_key if not creds.secret_key else aws_access_key_id
+        self.aws_secret_access_key = creds.access_key if not creds.access_key else aws_secret_access_key
         self.region_name = region_name
         self.table_name = table_name
         self.encoder = encoder

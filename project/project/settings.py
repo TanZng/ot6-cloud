@@ -67,8 +67,8 @@ ITEM_PIPELINES = {
    'project.pipelines.DynamoDbPipeline': 1,
 }
 
-AWS_ACCESS_KEY_ID = os.getenv('SECRET_ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = os.getenv('ACCESS_KEY_ID')
+AWS_ACCESS_KEY_ID = os.getenv('ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('SECRET_ACCESS_KEY')
 DYNAMODB_PIPELINE_REGION_NAME = 'us-east-1'
 DYNAMODB_PIPELINE_TABLE_NAME = 'project-dynamodb'
 

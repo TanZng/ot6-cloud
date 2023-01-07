@@ -26,17 +26,19 @@ apt-get install -y python3-pip git curl
 
 # Create directory
 mkdir -p /opt/repo
+mkdir -p /var/log/cron
 
 # Clone scraper and install requirements.txt
-git clone git@github.com:TanZng/ot6-cloud.git /opt/repo
+git clone https://github.com/TanZng/ot6-cloud.git /opt/repo
 cd /opt/repo/project
 pip3 install -r requirements.txt
 
-# !!! Create a cron job to run the main.py script every 10 minutes
+# !!! Create a cron job to run the main.py script every 3 minutes
 # !!! TODO: change how often run the script
 sudo service cron start
 
-echo "*/10  * * * * /opt/repo/crawl.sh >> > $HOME/project-`date +\%Y\%m\%d\%H\%M\%S`-cron.log 2>&1" | crontab
+# echo "*/10  * * * * /opt/repo/crawl.sh >> > $HOME/project-`date +\%Y\%m\%d\%H\%M\%S`-cron.log 2>&1" | crontab
+echo "*/3  * * * * /opt/repo/crawl.sh 2>&1 | /opt/repo/timestap.sh >> /var/log/cron/spider_log.log" | crontab
 
 EOF
 

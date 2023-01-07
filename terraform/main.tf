@@ -32,11 +32,11 @@ git clone git@github.com:TanZng/ot6-cloud.git /opt/project
 cd /opt/project
 pip3 install -r requirements.txt
 
-# !!! Create a cron job to run the main.py script every minute
+# !!! Create a cron job to run the main.py script every 10 minutes
 # !!! TODO: change how often run the script
 sudo service cron start
 
-echo "* * * * * /opt/project/crawl.sh >> > $HOME/project-`date +\%Y\%m\%d\%H\%M\%S`-cron.log 2>&1" | crontab
+echo "*/10  * * * * /opt/project/crawl.sh >> > $HOME/project-`date +\%Y\%m\%d\%H\%M\%S`-cron.log 2>&1" | crontab
 
 EOF
 

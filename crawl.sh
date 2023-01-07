@@ -2,4 +2,4 @@
 # go to the spider directory
 cd /opt/repo/project
 # run the spider
-scrapy crawl product
+/usr/local/bin/scrapy crawl product

@@ -37,8 +37,7 @@ pip3 install -r requirements.txt
 # !!! TODO: change how often run the script
 sudo service cron start
 
-# echo "*/10  * * * * /opt/repo/crawl.sh >> > $HOME/project-`date +\%Y\%m\%d\%H\%M\%S`-cron.log 2>&1" | crontab
-echo "*/3 * * * * root /opt/repo/crawl.sh 2>&1 | /opt/repo/timestap.sh >> /var/log/cron/spider_log.log" | crontab
+echo "*/3 * * * * (/bin/bash /opt/repo/crawl.sh 2>&1 | /opt/repo/timestap.sh) >> /var/log/cron/spider_log.log" | crontab
 
 EOF
 

@@ -22,6 +22,7 @@ dict_of_locations_with_session_ids = {
 }
 
 class ProductSpider(scrapy.Spider):
+    name = 'product'
 
     def __init__(self, **kwargs):
         self.name = 'product'

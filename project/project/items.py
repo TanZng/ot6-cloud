@@ -22,3 +22,4 @@ class ProjectItem(Item):
     rating_value= Field()
     rating_count= Field()
     sold_by = Field()
+    location = Field()

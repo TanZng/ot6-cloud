@@ -1,13 +1,56 @@
-version: "3"
-
 services:
   notebook:
-    build: notebook/
+    build:
+    # python-3.8
+      context: ./notebook
+      dockerfile: Dockerfile
     env_file:
       - .env
     ports:
       - 8888:8888
+      - 4040:4040
     volumes:
-       - ./analytics:/home/jovyan/work/data
+       - ./analytics:/home/jovyan/work/
     environment:
       - GRANT_SUDO=yesd
+      - PYSPARK_PYTHON=python
+      - PYSPARK_DRIVER_PYTHON=python
+  spark:
+    # python-3.8
+    image: docker.io/bitnami/spark:3.3
+    environment:
+      - PYSPARK_PYTHON=/opt/bitnami/python/bin/python
+      - PYSPARK_DRIVER_PYTHON=/opt/bitnami/python/bin/python
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - '8080:8080'
+  spark-worker-1:
+    image: docker.io/bitnami/spark:3.3
+    environment:
+      - PYSPARK_PYTHON=/opt/bitnami/python/bin/python
+      - PYSPARK_DRIVER_PYTHON=/opt/bitnami/python/bin/python
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+  spark-worker-2:
+    image: docker.io/bitnami/spark:3.3
+    environment:
+      - PYSPARK_PYTHON=/opt/bitnami/python/bin/python
+      - PYSPARK_DRIVER_PYTHON=/opt/bitnami/python/bin/python
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no

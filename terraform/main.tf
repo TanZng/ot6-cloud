@@ -36,7 +36,7 @@ pip3 install -r requirements.txt
 # Create a cron job to run the scraper at 12am and 12pm
 sudo service cron start
 
-echo "0 */12 * * * (/bin/bash /opt/repo/crawl.sh Paris /var/log/cron/spider_log.log)" | crontab
+echo "0 12 * * * (/bin/bash /opt/repo/crawl.sh Paris /var/log/cron/spider_log.log)" | crontab
 
 EOF
 

@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  notebook:
+    build: notebook/
+    env_file:
+      - .env
+    ports:
+      - 8888:8888
+    volumes:
+       - ./analytics:/home/jovyan/work/data
+    environment:
+      - GRANT_SUDO=yesd

@@ -11,10 +11,15 @@ ACCESS_KEY_ID=XXXXXXXXXX
 
 Run
 ```bash
-docker compose up -d
+docker compose up --scale spark-worker=3
 ```
 
 Open http://localhost:8888/notebooks/work/data/analytics.ipynb
+
+Stop using
+```bash
+docker compose down -v --remove-orphans
+```
 
 
 ### Cluster overview

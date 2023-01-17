@@ -1,7 +1,6 @@
 services:
   notebook:
     build:
-    # python-3.8
       context: ./notebook
       dockerfile: Dockerfile
     env_file:
@@ -14,13 +13,14 @@ services:
     environment:
       - GRANT_SUDO=yesd
       - PYSPARK_PYTHON=python
-      - PYSPARK_DRIVER_PYTHON=python
+      - PYSPARK_DRIVER_PYTHON=jupyter
   spark:
-    # python-3.8
-    image: docker.io/bitnami/spark:3.3
+    build:
+      context: ./notebook
+      dockerfile: spark.Dockerfile
     environment:
-      - PYSPARK_PYTHON=/opt/bitnami/python/bin/python
-      - PYSPARK_DRIVER_PYTHON=/opt/bitnami/python/bin/python
+      - PYSPARK_PYTHON=python
+      - PYSPARK_DRIVER_PYTHON=jupyter
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
       - SPARK_RPC_ENCRYPTION_ENABLED=no
@@ -28,11 +28,13 @@ services:
       - SPARK_SSL_ENABLED=no
     ports:
       - '8080:8080'
-  spark-worker-1:
-    image: docker.io/bitnami/spark:3.3
+  spark-worker:
+    build:
+      context: ./notebook
+      dockerfile: spark.Dockerfile
     environment:
-      - PYSPARK_PYTHON=/opt/bitnami/python/bin/python
-      - PYSPARK_DRIVER_PYTHON=/opt/bitnami/python/bin/python
+      - PYSPARK_PYTHON=python
+      - PYSPARK_DRIVER_PYTHON=jupyter
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
       - SPARK_WORKER_MEMORY=1G
@@ -41,16 +43,15 @@ services:
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
-  spark-worker-2:
-    image: docker.io/bitnami/spark:3.3
+  mongodb:
+    image: docker.io/bitnami/mongodb:6.0
+    ports:
+      - "27017:27017"
     environment:
-      - PYSPARK_PYTHON=/opt/bitnami/python/bin/python
-      - PYSPARK_DRIVER_PYTHON=/opt/bitnami/python/bin/python
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark:7077
-      - SPARK_WORKER_MEMORY=1G
-      - SPARK_WORKER_CORES=1
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_RPC_ENCRYPTION_ENABLED=no
-      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no
+      - MONGODB_DATABASE=test
+    volumes:
+      - 'mongodb_data:/bitnami/mongodb'
+
+volumes:
+  mongodb_data:
+    driver: local

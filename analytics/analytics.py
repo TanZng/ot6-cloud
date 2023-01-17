@@ -25,7 +25,7 @@ from pyspark.sql.types import *
 # %%
 # Spark session & context
 spark = SparkSession.builder.master("spark://spark:7077") \
-        .appName("jupyter-notebook") \
+        .appName("jupyter-notebook-analytics") \
         .config("spark.driver.memory", "512m") \
         .config("spark.mongodb.input.uri", "mongodb://mongodb:27017/test.myCollection") \
         .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/test.myCollection") \
@@ -62,15 +62,14 @@ people = spark.createDataFrame([("Bilbo Baggins",  50), ("Gandalf", 1000), ("Tho
 people.write.format("mongo").mode("append").save()
 # people.write.format("mongodb").mode("append").save()
 
+
+# %%
 # If you need to write to a different MongoDB collection, use the .option() 
 # method with .write().
 # To write to a collection called contacts in a database called people, 
 # specify the collection and database with .option():
 # OLD: people.write.format("mongodb").mode("append").option("database","people").option("collection", "contacts").save()
 # people.write.format("mongo").mode("append").option("database", "people").option("collection", "contacts").save()
-people.show()
-
-# %%
 people.show()
 
 # %%

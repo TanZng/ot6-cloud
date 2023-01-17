@@ -20,7 +20,9 @@ Run
 docker compose up --scale spark-worker=3
 ```
 
-Open http://localhost:8888/notebooks/work/data/analytics.ipynb
+Open:
+- http://localhost:8888/notebooks/work/analytics.ipynb
+- http://localhost:8888/notebooks/work/index2mongo.ipynb
 
 Stop using
 ```bash

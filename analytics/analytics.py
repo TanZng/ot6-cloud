@@ -21,22 +21,39 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+import pyspark.pandas as ps
 
 # %%
 # Spark session & context
 spark = SparkSession.builder.master("spark://spark:7077") \
         .appName("jupyter-notebook-analytics") \
         .config("spark.driver.memory", "512m") \
-        .config("spark.mongodb.input.uri", "mongodb://mongodb:27017/test.myCollection") \
-        .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/test.myCollection") \
-        .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector_2.12:3.0.2') \
         .getOrCreate()
+spark.conf.set("spark.sql.parquet.enableVectorizedReader","false")  
 spark
 
 
 # %%
 sc = spark.sparkContext
 sc
+
+# %%
+pdf = ps.read_parquet('/home/jovyan/work/data/**/*.parquet.zst')
+
+# %%
+type(pdf)
+
+# %%
+df.columns
+
+# %%
+pdf["productCategory"].drop_duplicates()
+
+# %%
+pdf.iloc[1]
+
+# %% [markdown]
+# # Example rdd
 
 # %%
 # Sum of the first 100 whole numbers

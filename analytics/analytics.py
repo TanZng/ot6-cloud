@@ -31,11 +31,6 @@ spark = SparkSession.builder.master("spark://spark:7077") \
         .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/test.myCollection") \
         .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector_2.12:3.0.2') \
         .getOrCreate()
-
-#         .config("spark.mongodb.write.connection.uri", "mongodb://mongodb:27017/test.myCollection") \
-#         .config("spark.mongodb.read.connection.uri", "mongodb://mongodb:27017/test.myCollection") \
-#         .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector:10.0.5') \
-
 spark
 
 
@@ -90,5 +85,102 @@ df.show()
 
 # %%
 spark.stop()
+
+# %% [markdown]
+# # Analytics
+
+# %%
+#df = spark.read.format("mongo").option("pipeline", pipeline).load()
+df = spark.read.format("mongo").load()
+df.printSchema()
+
+# %%
+# get all columnnames in order
+df.columns
+
+# %%
+rdd = df.rdd
+
+# %%
+rdd2 = rdd.sample(False, 0.1, 81)
+type(rdd2)
+
+# %%
+df2 = rdd2.toDF(df.columns)
+
+# %%
+x = df2.select("productCategory").distinct().show()
+print(x)
+
+# %%
+# maybe faster as rdd
+
+# %% [markdown]
+# ## Analysis of out-of-stock products by category
+
+# %%
+#unavailableProductsDf = df.filter(df[productIsAvailable].isNull()).count()
+categories = df.select("productCategory").distinct().show() # convert to list
+dates = df.select("productDate").distinct().show()
+
+# count unavailable products by category and date
+for category in categories:
+    for date in dates:
+        filtered_df = df.filter((df.productCategory == category) & (df.productDate == date))
+        #available_count = filtered_df.filter(filtered_df.productIsAvailable == "yes").count()
+        unavailable_count = filtered_df.filter(filtered_df.productIsAvailable == "no").count()
+        # see if total is always the same
+        # include location?
+    # each category one color line, x-axis date, y-axis count of unavailable products
+    plt.plot(dates, unavailable_count, label = category)
+
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# ## Analysis of out-of-stock products by departments
+
+# %%
+#departments = df.select("zip_code").map
+
+rdd = spark.sparkContext.parallelize(df)
+rdd2 = rdd.map(lambda x: "".join(list(x["zip_code"])[:1]))
+#df2 = rdd2.toDF(["name","gender","new_salary"]   )
+departments = df.select("zip_code").distinct().show()
+
+for element in rdd2.collect():
+    print(element)
+for department in departments:
+    for date in dates:
+        # count avaiable and unavailable products
+        filtered_df = df.filter((df.zip_code == department) & (df.productDate == date))
+        #available_count = filtered_df.filter(filtered_df.productIsAvailable == "yes").count()
+        unavailable_count = filtered_df.filter(filtered_df.productIsAvailable == "no").count()
+        # see if total is always the same
+    # each category one color line, x-axis date, y-axis count of unavailable products
+    plt.plot(dates, unavailable_count, label = category)
+
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# ## Evolution of prices over time and by department
+
+# %%
+for department in departments:
+    for date in dates:
+        filtered_df = df.filter((df.zip_code == department) & (df.productDate == date))
+        # average prices over department
+        prices = filtered_df.filter
+        df.groupBy("zip_code").agg(F.mean('productPrice'), F.count('productPrice')).show()
+
+
+# %% [markdown]
+# ## Market share of customers (based on the brands)
+
+# %%
+
+# %% [markdown]
+# ## Market shares by group
 
 # %%

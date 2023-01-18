@@ -21,6 +21,7 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+from pyspark.sql.types import StringType
 
 import os
 os.environ["PYARROW_IGNORE_TIMEZONE"] = "1"
@@ -34,10 +35,6 @@ spark = SparkSession.builder.master("spark://spark:7077") \
         .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/test.myCollection") \
         .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector_2.12:3.0.2') \
         .getOrCreate()
-
-#         .config("spark.mongodb.write.connection.uri", "mongodb://mongodb:27017/test.myCollection") \
-#         .config("spark.mongodb.read.connection.uri", "mongodb://mongodb:27017/test.myCollection") \
-#         .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector:10.0.5') \
 
 spark
 
@@ -54,8 +51,6 @@ df = spark.read.option("overwriteSchema", "true").parquet('/home/jovyan/work/dat
 df
 
 # %%
-from pyspark.sql.types import StringType
-
 d2 = df.withColumn("zip_code",df["zip_code"].cast(StringType()))
 
 # %%

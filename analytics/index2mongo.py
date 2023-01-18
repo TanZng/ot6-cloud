@@ -45,12 +45,28 @@ spark
 # # Write data in MongoDB
 
 # %%
-df = spark.read.parquet('/home/jovyan/work/data/**/*.parquet.zst')
+spark.conf.set("spark.sql.parquet.enableVectorizedReader","false")  
+
+# %%
+df = spark.read.option("overwriteSchema", "true").parquet('/home/jovyan/work/data/**/*.parquet.zst')
+#df = spark.read.option("overwriteSchema", "true").parquet('/home/jovyan/work/data/21_12_2022/2022-12-21.1.131762.parquet.zst')
+
 df
 
 # %%
-df.write.format("mongo").mode("append").save()
-df.printSchema()
+from pyspark.sql.types import StringType
+
+d2 = df.withColumn("zip_code",df["zip_code"].cast(StringType()))
+
+# %%
+d2.printSchema()
+
+# %%
+d2.write.format("mongo").mode("overwrite").option("overwriteSchema", "true").save()
+
+
+# %%
+d2.printSchema()
 
 # %% [markdown]
 # # Read data in MongoDB
@@ -60,4 +76,4 @@ df = spark.read.format("mongo").load()
 df.printSchema()
 
 # %%
-df.select("productName").show()
+df.select("productName").show(5)

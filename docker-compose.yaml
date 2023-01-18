@@ -3,8 +3,8 @@ services:
     build:
       context: ./notebook
       dockerfile: Dockerfile
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     ports:
       - 8888:8888
       - 4040:4040

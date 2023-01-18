@@ -6,8 +6,8 @@ services:
     # env_file:
     #   - .env
     ports:
-      - 8888:8888
-      - 4040:4040
+      - "100.102.131.26:8888:8888"
+      - "100.102.131.26:4040:4040"
     volumes:
        - ./analytics:/home/jovyan/work/
        - ./tmp/data:/home/jovyan/work/data:rw
@@ -30,7 +30,7 @@ services:
       - SPARK_SSL_ENABLED=no
       - PYARROW_IGNORE_TIMEZONE=1
     ports:
-      - '8080:8080'
+      - '100.102.131.26:8080:8080'
     volumes:
        - ./tmp/data:/home/jovyan/work/data:rw
   spark-worker:
@@ -53,8 +53,7 @@ services:
        - ./tmp/data:/home/jovyan/work/data:rw
   mongodb:
     image: docker.io/bitnami/mongodb:6.0
-    ports:
-      - "27017:27017"
+    restart: "always"
     environment:
       - MONGODB_DATABASE=test
     volumes:

@@ -22,9 +22,37 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql.types import StringType
-
+import pyspark.pandas as ps
+import glob
 import os
+
 os.environ["PYARROW_IGNORE_TIMEZONE"] = "1"
+
+# %%
+# Spark session & context
+spark = SparkSession.builder.master("spark://spark:7077") \
+        .appName("jupyter-notebook-index2mongo") \
+        .config("spark.driver.memory", "1g") \
+        .getOrCreate()
+
+spark
+
+# %%
+spark.conf.set("spark.sql.parquet.enableVectorizedReader","false")  
+
+# %%
+df = ps.read_parquet('/home/jovyan/work/data/**/*.parquet.zst')
+
+#df = spark.read.option("overwriteSchema", "true").parquet('/home/jovyan/work/data/**/*.parquet.zst')
+
+# %%
+type(df)
+
+# %%
+df.tail(2)
+
+# %%
+df.tail(5)
 
 # %%
 # Spark session & context
@@ -38,6 +66,22 @@ spark = SparkSession.builder.master("spark://spark:7077") \
 
 spark
 
+# %%
+
+#pdf = pd.read_parquet('/home/jovyan/work/data/17_12_2022/')
+
+files = glob.glob('/home/jovyan/work/data/**/*.parquet.zst')
+
+# %%
+pdf = pd.concat([pd.read_parquet(fp) for fp in files])
+len(pdf)
+
+# %%
+
+
+df = vaex.from_pandas(pdf, copy_index=False) # assuming you don't care about the index, which i think spark also does not have by default
+df
+
 # %% [markdown]
 # # Write data in MongoDB
 
@@ -49,6 +93,12 @@ df = spark.read.option("overwriteSchema", "true").parquet('/home/jovyan/work/dat
 #df = spark.read.option("overwriteSchema", "true").parquet('/home/jovyan/work/data/21_12_2022/2022-12-21.1.131762.parquet.zst')
 
 df
+
+# %%
+df.printSchema()
+
+# %%
+df.select('productName').collect()
 
 # %%
 d2 = df.withColumn("zip_code",df["zip_code"].cast(StringType()))
@@ -72,3 +122,8 @@ df.printSchema()
 
 # %%
 df.select("productName").show(5)
+
+# %%
+import vaex
+vdf = vaex.open('/home/jovyan/work/data/**/*.parquet.zst')
+vdf

@@ -6,8 +6,8 @@ services:
     # env_file:
     #   - .env
     ports:
-      - 8888:8888
-      - 4040:4040
+      - '8888:8888'
+      - '4040:4040'
     volumes:
        - ./analytics:/home/jovyan/work/
        - ./tmp/data:/home/jovyan/work/data:rw

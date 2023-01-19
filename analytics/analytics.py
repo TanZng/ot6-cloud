@@ -14,6 +14,29 @@
 # ---
 
 # %%
+import vaex
+import os
+# load data
+DATA_FILE_PATH = '/home/jovyan/work/data/'
+
+TEST_DATA_PATH_1 = '17_12_2022/'
+TEST_DATA_PATH_2 = './data/18_12_2022/'
+TEST_DATA_PATH_3 = './data/19_12_2022/'
+
+paths = [TEST_DATA_PATH_1]
+df = vaex.DataFrame()
+
+for path in paths:
+    for file in os.listdir(path):
+        file_path = path + file
+
+        df_pandas = pd.read_parquet(file_path)
+        df2 = vaex.from_pandas(df_pandas)
+        df = df2.concat([df, df2])
+
+print(df.head(5))
+
+# %%
 import findspark
 findspark.init()
 

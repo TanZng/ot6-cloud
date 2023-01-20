@@ -30,7 +30,7 @@ services:
       - SPARK_SSL_ENABLED=no
       - PYARROW_IGNORE_TIMEZONE=1
     ports:
-      - '8080:8080'
+      - '100.102.131.26:8080:8080'
     volumes:
        - ./tmp/data:/home/jovyan/work/data:rw
   spark-worker:
@@ -51,16 +51,4 @@ services:
       - PYARROW_IGNORE_TIMEZONE=1
     volumes:
        - ./tmp/data:/home/jovyan/work/data:rw
-#   mongodb:
-#     image: docker.io/bitnami/mongodb:6.0
-#     restart: unless-stopped
-#     ports:
-#       - "27017:27017"
-#     environment:
-#       - MONGODB_DATABASE=test
-#     volumes:
-#       - 'mongodb_data:/bitnami/mongodb'
 
-# volumes:
-#   mongodb_data:
-#     driver: local

@@ -160,7 +160,7 @@ pfer = fer.toPandas()
 pfer.plot(kind="bar", x='productBrand', y='count')
 
 # %% [markdown]
-# ### Evolution of discounts over time by department
+# ### Evolution of discounts by brand
 
 # %%
 fer = sdf.filter(col("shopID") == "278") \
@@ -187,7 +187,7 @@ plt.gcf().autofmt_xdate()
 plt.show()
 
 # %% [markdown]
-# ### Which Videogame become more expensive for xmas
+# ### Which Videogame become more expensive for Christmas
 
 # %%
 games = sdf.select("productPrice", "productName", "formatedDate") \

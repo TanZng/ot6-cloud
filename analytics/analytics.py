@@ -14,6 +14,29 @@
 # ---
 
 # %%
+import vaex
+import os
+# load data
+DATA_FILE_PATH = '/home/jovyan/work/data/'
+
+TEST_DATA_PATH_1 = '17_12_2022/'
+TEST_DATA_PATH_2 = './data/18_12_2022/'
+TEST_DATA_PATH_3 = './data/19_12_2022/'
+
+paths = [TEST_DATA_PATH_1]
+df = vaex.DataFrame()
+
+for path in paths:
+    for file in os.listdir(path):
+        file_path = path + file
+
+        df_pandas = pd.read_parquet(file_path)
+        df2 = vaex.from_pandas(df_pandas)
+        df = df2.concat([df, df2])
+
+print(df.head(5))
+
+# %%
 import findspark
 findspark.init()
 
@@ -21,27 +44,39 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+import pyspark.pandas as ps
 
 # %%
 # Spark session & context
 spark = SparkSession.builder.master("spark://spark:7077") \
         .appName("jupyter-notebook-analytics") \
         .config("spark.driver.memory", "512m") \
-        .config("spark.mongodb.input.uri", "mongodb://mongodb:27017/test.myCollection") \
-        .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/test.myCollection") \
-        .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector_2.12:3.0.2') \
         .getOrCreate()
-
-#         .config("spark.mongodb.write.connection.uri", "mongodb://mongodb:27017/test.myCollection") \
-#         .config("spark.mongodb.read.connection.uri", "mongodb://mongodb:27017/test.myCollection") \
-#         .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector:10.0.5') \
-
+spark.conf.set("spark.sql.parquet.enableVectorizedReader","false")  
 spark
 
 
 # %%
 sc = spark.sparkContext
 sc
+
+# %%
+pdf = ps.read_parquet('/home/jovyan/work/data/**/*.parquet.zst')
+
+# %%
+type(pdf)
+
+# %%
+df.columns
+
+# %%
+pdf["productCategory"].drop_duplicates()
+
+# %%
+pdf.iloc[1]
+
+# %% [markdown]
+# # Example rdd
 
 # %%
 # Sum of the first 100 whole numbers
@@ -90,5 +125,102 @@ df.show()
 
 # %%
 spark.stop()
+
+# %% [markdown]
+# # Analytics
+
+# %%
+#df = spark.read.format("mongo").option("pipeline", pipeline).load()
+df = spark.read.format("mongo").load()
+df.printSchema()
+
+# %%
+# get all columnnames in order
+df.columns
+
+# %%
+rdd = df.rdd
+
+# %%
+rdd2 = rdd.sample(False, 0.1, 81)
+type(rdd2)
+
+# %%
+df2 = rdd2.toDF(df.columns)
+
+# %%
+x = df2.select("productCategory").distinct().show()
+print(x)
+
+# %%
+# maybe faster as rdd
+
+# %% [markdown]
+# ## Analysis of out-of-stock products by category
+
+# %%
+#unavailableProductsDf = df.filter(df[productIsAvailable].isNull()).count()
+categories = df.select("productCategory").distinct().show() # convert to list
+dates = df.select("productDate").distinct().show()
+
+# count unavailable products by category and date
+for category in categories:
+    for date in dates:
+        filtered_df = df.filter((df.productCategory == category) & (df.productDate == date))
+        #available_count = filtered_df.filter(filtered_df.productIsAvailable == "yes").count()
+        unavailable_count = filtered_df.filter(filtered_df.productIsAvailable == "no").count()
+        # see if total is always the same
+        # include location?
+    # each category one color line, x-axis date, y-axis count of unavailable products
+    plt.plot(dates, unavailable_count, label = category)
+
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# ## Analysis of out-of-stock products by departments
+
+# %%
+#departments = df.select("zip_code").map
+
+rdd = spark.sparkContext.parallelize(df)
+rdd2 = rdd.map(lambda x: "".join(list(x["zip_code"])[:1]))
+#df2 = rdd2.toDF(["name","gender","new_salary"]   )
+departments = df.select("zip_code").distinct().show()
+
+for element in rdd2.collect():
+    print(element)
+for department in departments:
+    for date in dates:
+        # count avaiable and unavailable products
+        filtered_df = df.filter((df.zip_code == department) & (df.productDate == date))
+        #available_count = filtered_df.filter(filtered_df.productIsAvailable == "yes").count()
+        unavailable_count = filtered_df.filter(filtered_df.productIsAvailable == "no").count()
+        # see if total is always the same
+    # each category one color line, x-axis date, y-axis count of unavailable products
+    plt.plot(dates, unavailable_count, label = category)
+
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# ## Evolution of prices over time and by department
+
+# %%
+for department in departments:
+    for date in dates:
+        filtered_df = df.filter((df.zip_code == department) & (df.productDate == date))
+        # average prices over department
+        prices = filtered_df.filter
+        df.groupBy("zip_code").agg(F.mean('productPrice'), F.count('productPrice')).show()
+
+
+# %% [markdown]
+# ## Market share of customers (based on the brands)
+
+# %%
+
+# %% [markdown]
+# ## Market shares by group
 
 # %%

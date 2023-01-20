@@ -14,6 +14,29 @@
 # ---
 
 # %%
+import vaex
+import os
+# load data
+DATA_FILE_PATH = '/home/jovyan/work/data/'
+
+TEST_DATA_PATH_1 = '17_12_2022/'
+TEST_DATA_PATH_2 = './data/18_12_2022/'
+TEST_DATA_PATH_3 = './data/19_12_2022/'
+
+paths = [TEST_DATA_PATH_1]
+df = vaex.DataFrame()
+
+for path in paths:
+    for file in os.listdir(path):
+        file_path = path + file
+
+        df_pandas = pd.read_parquet(file_path)
+        df2 = vaex.from_pandas(df_pandas)
+        df = df2.concat([df, df2])
+
+print(df.head(5))
+
+# %%
 import findspark
 findspark.init()
 
@@ -21,22 +44,39 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+import pyspark.pandas as ps
 
 # %%
 # Spark session & context
 spark = SparkSession.builder.master("spark://spark:7077") \
         .appName("jupyter-notebook-analytics") \
         .config("spark.driver.memory", "512m") \
-        .config("spark.mongodb.input.uri", "mongodb://mongodb:27017/test.myCollection") \
-        .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/test.myCollection") \
-        .config('spark.jars.packages', 'org.mongodb.spark:mongo-spark-connector_2.12:3.0.2') \
         .getOrCreate()
+spark.conf.set("spark.sql.parquet.enableVectorizedReader","false")  
 spark
 
 
 # %%
 sc = spark.sparkContext
 sc
+
+# %%
+pdf = ps.read_parquet('/home/jovyan/work/data/**/*.parquet.zst')
+
+# %%
+type(pdf)
+
+# %%
+df.columns
+
+# %%
+pdf["productCategory"].drop_duplicates()
+
+# %%
+pdf.iloc[1]
+
+# %% [markdown]
+# # Example rdd
 
 # %%
 # Sum of the first 100 whole numbers

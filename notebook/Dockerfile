@@ -4,4 +4,4 @@ COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["jupyter","notebook","--NotebookApp.token=''"]
+ENTRYPOINT ["jupyter","notebook", "--ip","0.0.0.0","--port", "8888","--no-browser","--NotebookApp.token=''"]

@@ -1,10 +1,6 @@
 # OT6 Cloud Project
 
-- [Spark 3.3.0](https://spark.apache.org/docs/3.3.0/) 
-- [PySpark 3.3.1](https://spark.apache.org/docs/3.3.1/api/python/reference/index.html) 
-- [Mongo Spark Connector 3.0.2](https://www.mongodb.com/docs/spark-connector/v3.0/python-api/)
-- [MongoDB Connector 3.0.2](https://www.mongodb.com/docs/spark-connector/v3.0/python-api/)
-- [PyMongo 4.3.3](https://pymongo.readthedocs.io/en/4.3.3/)
+![Diagram](.github/diagram.png)
 
 ## To run the analytics
 
@@ -39,6 +35,10 @@ docker compose down -v --remove-orphans
 | Spark Master    | [localhost:8080](http://localhost:8080/) | Spark Driver                                                         |
 | Spark Worker I  |                                          | Spark Worker node                                                    |
 | Spark Worker II |                                          | Spark Worker node                                                    |
+
+### Stack
+- [Spark 3.3.0](https://spark.apache.org/docs/3.3.0/) 
+- [PySpark 3.3.1](https://spark.apache.org/docs/3.3.1/api/python/reference/index.html) 
 
 
 ## To run the spider

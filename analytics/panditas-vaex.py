@@ -54,3 +54,9 @@ type(vdf)
 
 # %%
 vdf.tail(5)
+
+# %%
+categories = vdf.productCategory.values # convert to list
+print(categories)
+
+# %%
